@@ -1,0 +1,59 @@
+:root {
+  --color-subtle: #eaeaea;
+  --color-primary: #0070f3;
+
+  --ff-primary: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: var(--ff-primary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+table {
+  /* border-radius: 0.5rem; */
+  background-color: #fff;
+  border: 1px var(--color-subtle) solid;
+  box-shadow: 2px 2px 4px #00003012;
+  border-collapse: collapse;
+}
+
+td {
+  border: 1px var(--color-subtle) solid;
+  padding: 0.25rem;
+}
+th {
+  border: 1px var(--color-subtle) solid;
+  padding: 0.25rem;
+}
+
+/* tr:first-child td:first-child {
+  border-top-left-radius: 0.5rem;
+}
+tr:first-child td:last-child {
+  border-top-right-radius: 0.5rem;
+}
+tr:last-child td:first-child {
+  border-bottom-left-radius: 0.5rem;
+}
+tr:last-child td:last-child {
+  border-bottom-right-radius: 0.5rem;
+}
+tr:first-child td {
+  border-top-style: solid;
+}
+tr td:first-child {
+  border-left-style: solid;
+} */
