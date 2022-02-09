@@ -58,12 +58,6 @@ const accessoryNames = [
   "Bandana",
   "Beanies",
   "Blankets",
-  "BODY PILLOW - ARIN",
-  "BODY PILLOW ARINA",
-  "BODY PILLOW - FURRY ARIN",
-  "BODY PILLOW - DAN",
-  "BODY PILLOW DANIELLA",
-  "BODY PILLOW - FURRY DAN",
   "Bottle Opener",
   "Bottles (BLUE)",
   "Bottles (ORANGE)",
@@ -118,14 +112,24 @@ const accessoryNames = [
   "Washie Tape Fired + Missed",
   "XMAS Mugs",
 ];
+const specialAccessoryNames = [
+  "BODY PILLOW - ARIN",
+  "BODY PILLOW ARINA",
+  "BODY PILLOW - FURRY ARIN",
+  "BODY PILLOW - DAN",
+  "BODY PILLOW DANIELLA",
+  "BODY PILLOW - FURRY DAN",
+];
 const sizes = ["xs", "s", "m", "l", "xl", "x2", "x3", "x4", "x5"];
 
 const smallToLargeRatio = 2; // we want ~1000 small and large 500 boxes
 const smallBoxes = [];
 const largeBoxes = [];
+const failedBoxes = [];
 
 const sizeShirtsDict = {};
 const accessories = [];
+const largeAccessories = [];
 
 // shirtNames.forEach(name => {
 //   shirtStockDict[name] = Object.assign({},
@@ -150,23 +154,47 @@ export default function Run() {
   });
 
   accessoryNames.forEach((name) => {
-    accessories.push(
-      new Product(
-        name,
-        Math.random() * 50 + 5,
-        Math.floor(Math.random() * 5),
-        Math.random > 0.2 ? true : false
-      )
-    );
+    let i = 0;
+    while (i < Math.floor(Math.random() * 200)) {
+      i++;
+      accessories.push(
+        new Product(
+          name,
+          Math.random() * 50 + 5,
+          1,
+          Math.random > 0.2 ? true : false
+        )
+      );
+    }
+  });
+
+  specialAccessoryNames.forEach((name) => {
+    let i = 0;
+    while (i < Math.floor(Math.random() * 3)) {
+      i++;
+      largeAccessories.push(
+        new Product(
+          name,
+          Math.random() * 20 + 90,
+          1,
+          Math.random > 0.2 ? true : false
+        )
+      );
+    }
   });
 
   let done = false;
   let outOfShirts = false;
   let count = 0;
 
-  while (!done) {
+  while (!done && accessories.length > 0) {
     // every third box, make it a large
-    let box = new Box(count++ % 3 === 0);
+    let box = null;
+    if (count++ % 3 === 0) {
+      box = new Box(true);
+    } else {
+      box = new Box();
+    }
 
     let sizeKeys = Object.keys(sizeShirtsDict);
 
@@ -178,7 +206,9 @@ export default function Run() {
     )} accessories left at a value of ${accessories.reduce(
         (t, x) => x.price + t,
         0
-      )}`);
+      )}
+      small boxes: ${smallBoxes.length}
+      large boxes: ${largeBoxes.length}`);
 
       done = true;
     }
@@ -199,19 +229,76 @@ export default function Run() {
         }
         break;
       }
-      // if we make it here, then we are out of shirts
-      console.warn("out of shirts");
-      outOfShirts = true;
+      if (i == sizeKeys.length - 1) {
+        // if we make it here, then we are out of shirts
+        outOfShirts = true;
+      }
     }
 
-    let shirt2 = pickRandomShirt(box.size);
-    if (box.tryAddShirt(shirt2)) {
-      shirt2.quantity -= 1;
+    fillBox(box);
+
+    if (!box.isTargetReached()) {
+      failedBoxes.push(box);
     } else {
-      console.log("failed to add another shirt");
+      if (box.isLarge) largeBoxes.push(box);
+      else smallBoxes.push(box);
     }
 
-    console.log(box);
+    console.log(box.toString());
+  }
+
+  let generateSummary = (boxes) => {
+    return {
+      total: boxes.length,
+      averageValue: (
+        boxes.reduce((t, x) => t + x.getValue(), 0) / boxes.length
+      ).toPrecision(3),
+      result: boxes,
+    };
+  };
+
+  return {
+    largeBoxes: generateSummary(largeBoxes),
+    smallBoxes: generateSummary(smallBoxes),
+    failedBoxes: generateSummary(failedBoxes),
+  };
+}
+
+function fillBox(box) {
+  let i = 0;
+  while (!box.isTargetReached()) {
+    // try to add a special accessory
+    if (
+      box.isLarge &&
+      largeAccessories.length > 0 &&
+      box.items.filter((x) => x.isSpecial).length == 0
+    ) {
+      box.items.push(largeAccessories.shift());
+      continue;
+    }
+
+    if (Math.random() > 0.6 || accessories.length === 0) {
+      let shirt = pickRandomShirt(box.size);
+      if (box.tryAddShirt(shirt)) {
+        shirt.quantity -= 1;
+        continue;
+      } else {
+        console.log(
+          `failed to add another ${box.size} shirt. filling with accessories...`
+        );
+      }
+    }
+
+    if (accessories.length > 0) box.items.push(accessories.shift());
+    else {
+      console.warn("ran out of accessories");
+      break;
+    }
+
+    if (i++ > 15) {
+      console.warn("possibly ran out of accessories");
+      break;
+    }
   }
 }
 

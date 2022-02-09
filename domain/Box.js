@@ -9,15 +9,18 @@ export default class Box {
   }
 
   isTargetReached() {
-    return this.getValue() > this.target;
+    return this.getValue() >= this.target;
   }
 
   getValue() {
-    return this.items.reduce((x, t) => x.price + t, 0);
+    return this.items.reduce((t, x) => x.price + t, 0);
   }
 
   toString() {
-    return this.getValue() + " - " + this.items;
+    let q = `$${this.getValue()}/$${this.target} - ${this.size} - ${this.items
+      .map((x) => x.description)
+      .toString()}`;
+    return q;
   }
 
   tryAddShirt(shirt) {
