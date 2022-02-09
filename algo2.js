@@ -133,73 +133,86 @@ const accessories = [];
 //   ))
 // });
 
-sizes.forEach((size) => {
-  sizeShirtsDict[size] = shirtNames.map((name) =>
-    new Product(
-      name,
-      Math.random > 0.5 ? 24 : 34,
-      Math.random() * 200,
-      size,
-      false
-    ).sort((a, b) => a.quantity - b.quantity)
-  );
-});
+export default function Run() {
+  sizes.forEach((size) => {
+    sizeShirtsDict[size] = shirtNames
+      .map(
+        (name) =>
+          new Product(
+            name,
+            Math.random() > 0.5 ? 24 : 34,
+            Math.floor(Math.random() * 5),
+            size,
+            false
+          )
+      )
+      .sort((a, b) => b.quantity - a.quantity);
+  });
 
-accessoryNames.forEach((name) => {
-  accessories.push(
-    new Product(
-      name,
-      Math.random() * 50 + 5,
-      Math.random() * 400,
-      Math.random > 0.2 ? true : false
-    )
-  );
-});
+  accessoryNames.forEach((name) => {
+    accessories.push(
+      new Product(
+        name,
+        Math.random() * 50 + 5,
+        Math.floor(Math.random() * 5),
+        Math.random > 0.2 ? true : false
+      )
+    );
+  });
 
-let done = false;
-let outOfShirts = false;
-let count = 0;
+  let done = false;
+  let outOfShirts = false;
+  let count = 0;
 
-while (!done) {
-  // every third box, make it a large
-  box = new Box(count++ % 3 == 0);
+  while (!done) {
+    // every third box, make it a large
+    let box = new Box(count++ % 3 === 0);
 
-  let sizeKeys = Object.keys(sizeShirtsDict);
+    let sizeKeys = Object.keys(sizeShirtsDict);
 
-  if (outOfShirts) {
-    console.log(`out of shirts.
+    if (outOfShirts) {
+      console.log(`out of shirts.
     there are still ${accessories.reduce(
-      (x, t) => x.quantity + t,
+      (t, x) => x.quantity + t,
       0
     )} accessories left at a value of ${accessories.reduce(
-      (x, t) => x.price + t,
-      0
-    )}`);
+        (t, x) => x.price + t,
+        0
+      )}`);
 
-    done = true;
-  }
+      done = true;
+    }
 
-  for (let i = 0; j < sizeKeys.length; i++) {
-    // check if there's still stock left for this size
-    if (getSumOfSize(sizeKeys[i] > 0)) {
-      shirts = sizeShirtsDict[sizeKeys[i]];
-      // iterate over shirts in this size, add the first one we can
-      for (let j = 0; j < shirts.length; j++) {
-        if (shirts[j].quantity > 0) {
-          let result = box.tryAddShirt(shirts[j]);
-          if (result) {
-            shirts[j].quantity -= 1;
-            break;
+    for (let i = 0; i < sizeKeys.length; i++) {
+      // check if there's still stock left for this size
+      if (getSumOfSize(sizeKeys[i]) > 0) {
+        let shirts = sizeShirtsDict[sizeKeys[i]];
+        // iterate over shirts in this size, add the first one we can
+        for (let j = 0; j < shirts.length; j++) {
+          if (shirts[j].quantity > 0) {
+            let result = box.tryAddShirt(shirts[j]);
+            if (result) {
+              shirts[j].quantity -= 1;
+              break;
+            }
           }
         }
+        break;
       }
-      break;
+      // if we make it here, then we are out of shirts
+      console.warn("out of shirts");
+      outOfShirts = true;
     }
-    // if we make it here, then we are out of shirts
-    outOfShirts = true;
-  }
 
-  sizeShirtsDict.box.tryAddShirt();
+    let shirt2 = pickRandomShirt(box.size);
+    if (box.tryAddShirt(shirt2)) {
+      shirt2.quantity -= 1;
+    } else {
+      console.log("failed to add another shirt");
+    }
+
+    console.log(box);
+  }
 }
 
 function pickRandomShirt(size = null) {
@@ -210,10 +223,15 @@ function pickRandomShirt(size = null) {
       ];
   }
 
-  shirts = sizeShirtsDict[size];
-  Math.random() * shirts.length;
+  let shirts = sizeShirtsDict[size].filter((x) => x.quantity > 0);
+  if (shirts.length === 0) return null;
+
+  let index = Math.floor(Math.random() * shirts.length);
+  return shirts[index];
 }
 
-function getSumOfSize(key) {
-  return sizeShirtsDict[key].reduce((x, t) => x.quantity + t, 0);
+function getSumOfSize(size) {
+  return sizeShirtsDict[size].reduce((t, x) => {
+    return x.quantity + t;
+  }, 0);
 }

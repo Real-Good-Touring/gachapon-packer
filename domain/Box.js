@@ -21,11 +21,15 @@ export default class Box {
   }
 
   tryAddShirt(shirt) {
+    if (shirt == null) return false;
+
     if (this.size && shirt.size !== this.size) {
       return false;
     }
     this.size = shirt.size;
 
     this.items.push(shirt);
+
+    return true;
   }
 }
