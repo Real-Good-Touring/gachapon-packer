@@ -16,13 +16,13 @@ export default function Post({ shirts, headers }) {
       <table>
         <thead>
           {headers.map((v, i) => (
-            <th>{v}</th>
+            <th key={i}>{v}</th>
           ))}
         </thead>
 
         {shirts.map((v, i) => (
-          <Link href={`shirts/${i + 4}`}>
-            <tr key={i}>
+          <Link key={i} passHref href={`shirts/${i + 4}`}>
+            <tr>
               {v.map((vv, i) => (
                 <td key={i}>{vv ? vv : " "}</td>
               ))}
