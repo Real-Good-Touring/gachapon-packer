@@ -2,7 +2,7 @@ const dev = process.env.NODE_ENV !== "production";
 
 const server = dev
   ? "http://localhost:3000"
-  : "https://gahapon-packer.netlify.app";
+  : "https://gachapon-packer.netlify.app";
 
 const baseUrl = server + "/api/";
 
