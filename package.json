@@ -1,5 +1,5 @@
 {
-  "name": "gsheets",
+  "name": "gachapon-packer",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "axios": "^0.25.0",
     "googleapis": "^78.0.0",
-    "next": "11.0.1",
+    "next": "^12.0.10",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
