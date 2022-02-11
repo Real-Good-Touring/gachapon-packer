@@ -27,7 +27,7 @@ export default function Home() {
             <p>View inventory to be packed</p>
           </a>
 
-          <a href={"/api/hello"} className={styles.card}>
+          <a href={"/api/boxes"} className={styles.card}>
             <h2>Pack &rarr;</h2>
             <p>Generate some Gachapon packing lists</p>
           </a>

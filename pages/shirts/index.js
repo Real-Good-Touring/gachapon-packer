@@ -1,28 +1,12 @@
-import { google } from "googleapis";
+import stock from "../../services/stockService";
 import Link from "next/link";
 import styles from "../../styles/Home.module.css";
 
 export async function getServerSideProps({ query }) {
-  const auth = await google.auth.getClient({
-    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-  });
+  let res = {};
 
-  const sheets = google.sheets({ version: "v4", auth });
-
-  const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: process.env.SHEET_ID,
-    range: "Current!AE4:AN51",
-  });
-
-  const shirts = response.data.values;
-  const headers = shirts.splice(0, 1)[0];
-
-  return {
-    props: {
-      shirts: shirts,
-      headers: headers,
-    },
-  };
+  let q = { props: await (await stock.getAll()).json() };
+  return q;
 }
 
 export default function Post({ shirts, headers }) {
