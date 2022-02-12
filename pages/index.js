@@ -42,9 +42,12 @@ export default function Home() {
             "https://docs.google.com/spreadsheets/d/1EpAYJPnfnADNrEEPToE3pNGiZR4mREX-u0NIM4gu9TA"
           }
           target="_blank"
+          style={{ textAlign: "center" }}
           rel="noreferrer"
         >
           Edit Data Source &#8599;
+          <br />
+          {process.env.REPOSITORY_URL}
         </a>
       </footer>
     </div>
