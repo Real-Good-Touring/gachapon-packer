@@ -18,7 +18,7 @@ module.exports = {
       );
     });
 
-    var json = JSON.stringify(secretsObj);
+    var json = JSON.stringify(secretsObj).replace(/\\\\n/g, "\\n");
 
     console.log(json);
     fs.writeFileSync("secrets.json", json);
