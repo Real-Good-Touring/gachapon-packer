@@ -1,7 +1,7 @@
 # netlify.toml
 
-[[plugins]]
-package = "/plugins/netlify-plugin-hello-world"
+# [[plugins]]
+# package = "/plugins/netlify-plugin-hello-world"
 
-[[plugins]]
-package = "/plugins/secrets-plugin"
+# [[plugins]]
+# package = "/plugins/secrets-plugin"
