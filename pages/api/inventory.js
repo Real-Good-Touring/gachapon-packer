@@ -38,7 +38,10 @@ export default async function handler(req, res) {
     //keyFile: "./secrets.json",
     credentials: {
       client_email: process.env.GOOGLE__client_email.replace("GOOGLE__", ""),
-      private_key: process.env.GOOGLE__private_key.replace("GOOGLE__", ""),
+      private_key: process.env.GOOGLE__private_key.replace(
+        "GOOGLE__",
+        ""
+      ).replace(/\\n/g, "\n"),
     },
     projectId: "pivotal-glider-340420",
   });
@@ -46,20 +49,33 @@ export default async function handler(req, res) {
   const sheets = google.sheets({ version: "v4", auth });
 
   try {
-    const response = await sheets.spreadsheets.values.get({
+    let response = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.SHEET_ID,
-      range: "Current!AE4:AN51",
+      range: "Shirts",
     });
 
     const shirts = response.data.values;
-    const headers = shirts.splice(0, 1)[0];
+    const shirtsHeaders = shirts.splice(0, 1)[0];
 
-    res.status(200).json({
-      shirts: shirts,
-      headers: headers,
+    response = await sheets.spreadsheets.values.get({
+      spreadsheetId: process.env.SHEET_ID,
+      range: "Accessories",
     });
+
+    const accessories = response.data.values;
+    const accessoriesHeaders = accessories.splice(0, 1)[0];
+
+    let result = {
+      shirts: { headers: shirtsHeaders, values: shirts },
+      accessories: { headers: accessoriesHeaders, values: accessories },
+    };
+    if (!res) {
+      return result;
+    }
+    res.status(200).json(result);
   } catch (ex) {
     console.log(ex);
     res.status(500);
+    res.send();
   }
 }

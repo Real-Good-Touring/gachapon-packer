@@ -120,7 +120,7 @@ const specialAccessoryNames = [
   "BODY PILLOW DANIELLA",
   "BODY PILLOW - FURRY DAN",
 ];
-const sizes = ["xs", "s", "m", "l", "xl", "x2", "x3", "x4", "x5"];
+const sizes = ["s", "m", "l", "xl", "x2", "x3", "x4", "x5"];
 
 const smallToLargeRatio = 2; // we want ~1000 small and large 500 boxes
 const smallBoxes = [];
@@ -137,12 +137,51 @@ const largeAccessories = [];
 //   ))
 // });
 
-export default function Run() {
+export default function Run(inventory) {
+  // transform shirts
+  inventory.shirts.values.forEach((row) => {
+    let description = row.splice(0, 1)[0];
+    let price = row.splice(0, 1)[0];
+    let i = 0;
+    sizes.forEach((size) => {
+      if (!sizeShirtsDict[size]) sizeShirtsDict[size] = [];
+      sizeShirtsDict[size].push(
+        new Product(
+          description,
+          !price ? 0 : parseNumberFromCurrency(price),
+          row[i] == "#REF!" || !row[i] ? 0 : parseInt(row[i]), // stock
+          size
+        )
+      );
+      i++;
+    });
+  });
+
+  // transform accessories
+  accessories.length = 0;
+  largeAccessories.length = 0;
+
+  inventory.accessories.values.forEach((row) => {
+    let description = row.splice(0, 1)[0];
+    let price = row.splice(0, 1)[0];
+    let isLargeOnly = row.splice(0, 1)[0].toLowerCase() == "true";
+    let product = new Product(
+      description,
+      !price ? 0 : parseNumberFromCurrency(price),
+      row[0] == "#REF!" || !row[0] ? 0 : parseInt(row[0]), // stock
+      null,
+      isLargeOnly
+    );
+    if (product.isSpecial) {
+      largeAccessories.push(product);
+    } else {
+      accessories.push(product);
+    }
+  });
+
   smallBoxes.length = 0;
   largeBoxes.length = 0;
   failedBoxes.length = 0;
-  accessories.length = 0;
-  largeAccessories.length = 0;
 
   let done = false;
   let count = 0;
@@ -205,6 +244,29 @@ export default function Run() {
     }
   }
 
+  failedBoxes.forEach((failedBox) => {
+    // unpack box
+    failedBox.items.forEach((x) => {
+      if (x.size != null) {
+        let match = sizeShirtsDict[x.size].find(
+          (y) => y.description == x.description
+        );
+        if (match) match.quantity++;
+        else sizeShirtsDict[x.size].push(x);
+      } else {
+        if (x.isSpecial) {
+          let match = largeAccessories.find(
+            (y) => y.description == x.description
+          );
+          if (match) match.quantity++;
+        } else {
+          let match = accessories.find((y) => y.description == x.description);
+          if (match) match.quantity++;
+        }
+      }
+    });
+  });
+
   let generateSummary = (boxes) => {
     return {
       total: boxes.length,
@@ -231,6 +293,9 @@ export default function Run() {
       .reduce((t, x) => t + x.quantity, 0),
     leftOverShirts: leftOverShirts,
     leftOverAccessories: accessories.reduce((t, x) => t + x.quantity, 0),
+    mostLeftOverAccessories: accessories
+      .sort((a, b) => b.quantity - a.quantity)
+      .slice(0, 5),
     leftOverLargeAccessories: largeAccessories.reduce(
       (t, x) => t + x.quantity,
       0
@@ -274,7 +339,9 @@ function getPossibleItems(exclusionList, size, isLarge, boxxy) {
       console.log(size);
     }
 
-  if (exclusionList === null) exclusionList = [];
+  if (exclusionList === null) {
+    exclusionList = [];
+  }
 
   // merge everything we can
   possibleShirts.filter((x) => x.quantity > 0).forEach((x) => result.push(x));
@@ -286,11 +353,19 @@ function getPossibleItems(exclusionList, size, isLarge, boxxy) {
   }
 
   //then filter concatenation by excluding products whose description is the same as one in the exclusionList
-  result = result.filter(
-    (p) =>
-      !exclusionList
-        .map((m) => m.description)
-        .some((s) => p.description.split(" ")[0].includes(s.description))
+  //   result = result.filter(
+  //     (p) =>
+  //       !exclusionList
+  //         .map((m) => m.description)
+  //         //.some((s) => p.description.split(" ")[0].includes(s.description))
+  //         .some((s) => {
+  //           p.description == s.description;
+  //         })
+  //   );
+  removeIf(result, (x) =>
+    exclusionList
+      .map((m) => m.description)
+      .some((exludedDescription) => x.description == exludedDescription)
   );
 
   return result.sort((a, b) => a.price - b.price || a.quantity - b.quantity);
@@ -333,16 +408,16 @@ function fillBox(box) {
       ) ?? possibleItems[[possibleItems.length - 1]];
 
     if (!item) {
-      console.warn("possibly ran out of products to use");
-      console.log("pp: " + box);
-      console.log(possibleItems);
+      console.warn("possibly ran out of products to use - " + box);
       return false;
     }
 
     // Add it
     // is this a shirt?
     if (item.size !== null) {
-      if (box.tryAddShirt(item)) {
+      let copy = JSON.parse(JSON.stringify(item));
+      copy.quantity = 1;
+      if (box.tryAddShirt(copy)) {
         item.quantity -= 1;
         continue;
       } else {
@@ -355,15 +430,17 @@ function fillBox(box) {
         break;
       }
     } else {
+      let copy = JSON.parse(JSON.stringify(item));
+      copy.quantity = 1;
       box.items.push(item);
       item.quantity -= 1;
     }
 
-    if (i++ > 5) {
-      console.warn("looped with no success 5 times");
-      return false;
-      break;
-    }
+    // if (i++ > 5) {
+    //   console.warn("looped with no success 5 times");
+    //   return false;
+    //   break;
+    // }
   }
 
   return true;
@@ -410,6 +487,10 @@ function generateMockData() {
   });
 }
 
+function parseNumberFromCurrency(text) {
+  return parseFloat(text.replace(/[^\d\.]/, ""));
+}
+
 // function pickRandomShirt(size = null) {
 //   if (size == null) {
 //     size =
@@ -430,3 +511,12 @@ function generateMockData() {
 //     return x.quantity + t;
 //   }, 0);
 // }
+
+function removeIf(arr, callback) {
+  var i = arr.length;
+  while (i--) {
+    if (callback(arr[i], i)) {
+      arr.splice(i, 1);
+    }
+  }
+}
