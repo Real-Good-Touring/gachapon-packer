@@ -1,40 +1,46 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { google } from "googleapis";
-var fs = require("fs");
 
 export default async function handler(req, res) {
   //const promise = new Promise(Run);
 
-  console.log(process.cwd());
+  // console.log(process.cwd());
 
-  console.log("Generating secrets.json");
-  let secretsObj = {};
+  // console.log("Generating secrets.json");
+  // let secretsObj = {};
 
-  var pattern = /^GOOGLE__/;
-  var matchingKeys = Object.keys(process.env).filter(function (key) {
-    return pattern.test(key);
-  });
+  // var pattern = /^GOOGLE__/;
+  // var matchingKeys = Object.keys(process.env).filter(function (key) {
+  //   return pattern.test(key);
+  // });
 
-  matchingKeys.forEach((x) => {
-    secretsObj[x.replace("GOOGLE__", "")] = process.env[x].replace(
-      "GOOGLE__",
-      ""
-    );
-  });
+  // matchingKeys.forEach((x) => {
+  //   secretsObj[x.replace("GOOGLE__", "")] = process.env[x].replace(
+  //     "GOOGLE__",
+  //     ""
+  //   );
+  // });
 
-  var json = JSON.stringify(secretsObj).replace(/\\\\n/g, "\\n");
+  // var json = JSON.stringify(secretsObj).replace(/\\\\n/g, "\\n");
 
-  console.log(json);
-  await fs.writeFile("secrets.json", json, () => {});
+  // console.log(json);
+  console.log(process.env.GOOGLE__private_key);
+  console.log(
+    process.env.GOOGLE__private_key.replace("GOOGLE__", "").replace(
+      /\\\\n/g,
+      "\\n"
+    )
+  );
+  //await fs.writeFile("secrets.json", json, () => {});
 
   const auth = await google.auth.getClient({
     scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-    keyFile: "./secrets.json",
-    // credentials: {
-    //   client_email: process.env.GOOGLE__client_email.replace("GOOGLE__", ""),
-    //   private_key: process.env.GOOGLE__private_key.replace("GOOGLE__", ""),
-    // },
-    // projectId: "pivotal-glider-340420",
+    //keyFile: "./secrets.json",
+    credentials: {
+      client_email: process.env.GOOGLE__client_email.replace("GOOGLE__", ""),
+      private_key: process.env.GOOGLE__private_key.replace("GOOGLE__", ""),
+    },
+    projectId: "pivotal-glider-340420",
   });
 
   const sheets = google.sheets({ version: "v4", auth });
