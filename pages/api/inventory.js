@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
   const auth = await google.auth.getClient({
     scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-
+    keyFile: "./secrets.json",
     // credentials: {
     //   client_email: process.env.GOOGLE__client_email.replace("GOOGLE__", ""),
     //   private_key: process.env.GOOGLE__private_key.replace("GOOGLE__", ""),
@@ -39,16 +39,21 @@ export default async function handler(req, res) {
 
   const sheets = google.sheets({ version: "v4", auth });
 
-  const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: process.env.SHEET_ID,
-    range: "Current!AE4:AN51",
-  });
+  try {
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: process.env.SHEET_ID,
+      range: "Current!AE4:AN51",
+    });
 
-  const shirts = response.data.values;
-  const headers = shirts.splice(0, 1)[0];
+    const shirts = response.data.values;
+    const headers = shirts.splice(0, 1)[0];
 
-  res.status(200).json({
-    shirts: shirts,
-    headers: headers,
-  });
+    res.status(200).json({
+      shirts: shirts,
+      headers: headers,
+    });
+  } catch (ex) {
+    console.log(ex);
+    res.status(500);
+  }
 }
