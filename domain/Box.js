@@ -16,6 +16,10 @@ export default class Box {
     return this.items.reduce((t, x) => x.price + t, 0);
   }
 
+  getRemainingValue() {
+    return this.target - this.getValue();
+  }
+
   toString() {
     let q = `$${this.getValue()}/$${this.target} - ${this.size} - ${this.items
       .map((x) => x.description)
@@ -29,6 +33,11 @@ export default class Box {
     if (this.size && shirt.size !== this.size) {
       return false;
     }
+
+    // avoid dupes
+    if (this.items.some((x) => x.description == shirt.description))
+      return false;
+
     this.size = shirt.size;
 
     this.items.push(shirt);

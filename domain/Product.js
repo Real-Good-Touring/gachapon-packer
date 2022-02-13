@@ -7,7 +7,11 @@ export default function Product(
 ) {
   this.description = desc;
   this.price = price;
+  this.quantity = qty;
   this.size = size;
   this.isSpecial = isSpecial;
-  this.quantity = qty;
+
+  this.toString = () => {
+    return `${this.description} - ${this.size} - ${this.quantity} left`;
+  };
 }
