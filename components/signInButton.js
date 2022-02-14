@@ -10,7 +10,7 @@ export default function SignInButton() {
       <button
         className={styles.card}
         onClick={() => signOut()}
-        style={{ flexGrow: 0, flexBasis: "auto" }}
+        style={{ flexGrow: 0, flexBasis: "auto", margin: 0, padding: "1em" }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
           <img
@@ -29,7 +29,7 @@ export default function SignInButton() {
     <button
       className={styles.card}
       onClick={() => signIn("google")}
-      style={{ flexGrow: 0, flexBasis: "auto" }}
+      style={{ flexGrow: 0, flexBasis: "auto", margin: 0, padding: "1em" }}
     >
       <div>Sign in</div>
     </button>

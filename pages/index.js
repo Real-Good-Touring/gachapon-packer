@@ -17,9 +17,9 @@ export default function Home() {
         <h1 className={styles.title}>{"📦 Gachapon Packer"}</h1>
 
         <div className={styles.grid}>
-          <a href={"/shirts"} className={styles.card}>
+          <a href={"/inventory"} className={styles.card}>
             <h2>Stock &rarr;</h2>
-            <p>View inventory to be packed</p>
+            <p>View inventory eligible to be packed</p>
           </a>
 
           <a href={"/api/boxes"} className={styles.card}>
