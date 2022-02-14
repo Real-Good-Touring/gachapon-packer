@@ -1,13 +1,6 @@
 import Head from "next/head";
-import Image from "next/image";
-import Product from "../domain/Product";
-import Run from "../algo2";
+import Header from "../components/header";
 import styles from "../styles/Home.module.css";
-
-var p = new Product("testy", 9.99, 1, "M");
-
-let shirtStockDict = {};
-let accessoryStockDict = {};
 
 export default function Home() {
   return (
@@ -15,7 +8,10 @@ export default function Home() {
       <Head>
         <title>Gachapon Packer</title>
         <link rel="icon" href="/favicon.png" />
+        <script src="https://accounts.google.com/gsi/client"></script>
       </Head>
+
+      <Header />
 
       <main className={styles.main}>
         <h1 className={styles.title}>{"📦 Gachapon Packer"}</h1>
@@ -28,7 +24,7 @@ export default function Home() {
 
           <a href={"/api/boxes"} className={styles.card}>
             <h2>Pack &rarr;</h2>
-            <p>Generate some Gachapon packing lists</p>
+            <p>Generate Gachapon packing lists</p>
           </a>
 
           <div />
@@ -37,9 +33,7 @@ export default function Home() {
 
       <footer className={styles.footer}>
         <a
-          href={
-            "https://docs.google.com/spreadsheets/d/1EpAYJPnfnADNrEEPToE3pNGiZR4mREX-u0NIM4gu9TA"
-          }
+          href={`https://docs.google.com/spreadsheets/d/${process.env.NEXT_PUBLIC_SHEET_ID}`}
           target="_blank"
           style={{ textAlign: "center" }}
           rel="noreferrer"

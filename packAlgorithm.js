@@ -491,27 +491,6 @@ function parseNumberFromCurrency(text) {
   return parseFloat(text.replace(/[^\d\.]/, ""));
 }
 
-// function pickRandomShirt(size = null) {
-//   if (size == null) {
-//     size =
-//       Object.keys(sizeShirtsDict)[
-//         Math.floor(Math.random() * Object.keys(sizeShirtsDict).length)
-//       ];
-//   }
-
-//   let shirts = sizeShirtsDict[size].filter((x) => x.quantity > 0);
-//   if (shirts.length === 0) return null;
-
-//   let index = Math.floor(Math.random() * shirts.length);
-//   return shirts[index];
-// }
-
-// function getSumOfSize(size) {
-//   return sizeShirtsDict[size].reduce((t, x) => {
-//     return x.quantity + t;
-//   }, 0);
-// }
-
 function removeIf(arr, callback) {
   var i = arr.length;
   while (i--) {

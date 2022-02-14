@@ -1,7 +1,10 @@
-import Run from "../../algo2";
+import Run from "../../packAlgorithm";
+import getInventory from "./inventory";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   //const promise = new Promise(Run);
 
-  res.status(200).send(JSON.stringify(Run(), null, 2));
+  let response = await getInventory();
+
+  res.status(200).send(JSON.stringify(Run(response), null, 2));
 }

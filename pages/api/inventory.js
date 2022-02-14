@@ -1,52 +1,33 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { google } from "googleapis";
+import { getSession } from "next-auth/react";
 
 export default async function handler(req, res) {
-  //const promise = new Promise(Run);
+  const session = await getSession({ req });
+  if (!session) {
+    if (res)
+      res.send({
+        error: "You must be signed in to view this page.",
+      });
+    return;
+  }
 
-  // console.log(process.cwd());
-
-  // console.log("Generating secrets.json");
-  // let secretsObj = {};
-
-  // var pattern = /^GOOGLE__/;
-  // var matchingKeys = Object.keys(process.env).filter(function (key) {
-  //   return pattern.test(key);
-  // });
-
-  // matchingKeys.forEach((x) => {
-  //   secretsObj[x.replace("GOOGLE__", "")] = process.env[x].replace(
-  //     "GOOGLE__",
-  //     ""
-  //   );
-  // });
-
-  // var json = JSON.stringify(secretsObj).replace(/\\\\n/g, "\\n");
-
-  // console.log(json);
-  console.log(process.env.GOOGLE__private_key);
-  console.log(
-    process.env.GOOGLE__private_key.replace("GOOGLE__", "").replace(
-      /\\\\n/g,
-      "\\n"
-    )
+  const oAuth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET
   );
-  //await fs.writeFile("secrets.json", json, () => {});
+  let credentials = {
+    refresh_token: session.token.refreshToken,
+    expiry_date: session.token.exp,
+    access_token: session.token.access_token,
+    scope: "openid profile email https://www.googleapis.com/auth/spreadsheets",
+  };
+  oAuth2Client.setCredentials(credentials);
 
-  const auth = await google.auth.getClient({
-    scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-    //keyFile: "./secrets.json",
-    credentials: {
-      client_email: process.env.GOOGLE__client_email.replace("GOOGLE__", ""),
-      private_key: process.env.GOOGLE__private_key.replace(
-        "GOOGLE__",
-        ""
-      ).replace(/\\n/g, "\n"),
-    },
-    projectId: "pivotal-glider-340420",
+  const sheets = google.sheets({
+    version: "v4",
+    auth: oAuth2Client,
   });
-
-  const sheets = google.sheets({ version: "v4", auth });
 
   try {
     let response = await sheets.spreadsheets.values.get({
