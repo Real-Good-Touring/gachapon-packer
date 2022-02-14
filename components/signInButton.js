@@ -14,13 +14,22 @@ export default function SignInButton() {
         style={{ flexGrow: 0, flexBasis: "auto", margin: 0, padding: "1em" }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
-          <Image
-            src={session.user.image}
-            width={32}
-            height={32}
-            alt="user image"
-            style={{ borderRadius: "8em", marginRight: "12px" }}
-          ></Image>
+          <div
+            style={{
+              borderRadius: "8em",
+              marginRight: "12px",
+              overflow: "hidden",
+              width: "32px",
+              height: "32px",
+            }}
+          >
+            <Image
+              src={session.user.image}
+              width={32}
+              height={32}
+              alt="user image"
+            ></Image>
+          </div>
           Signed in as
           <br /> {session.user.name}
         </div>

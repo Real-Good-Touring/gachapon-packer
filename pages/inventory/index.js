@@ -3,40 +3,36 @@ import Link from "next/link";
 import styles from "../../styles/Home.module.css";
 import React from "react";
 import Header from "../../components/header";
-import { useSession, signIn, signOut } from "next-auth/react";
+import getInventory from "../../getInventory";
+import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
-// export async function getServerSideProps({ query }) {
-//   let res = await fetch(
-//     process.env.NEXT_PUBLIC_BASE_ADDRESS + "/api/inventory",
-//     {
-//       method: "GET",
-//     }
-//   );
-//   let result = await res.json();
-//   return result;
-// }
+export async function getServerSideProps(ctx) {
+  let session = await getSession(ctx);
+  let result = await getInventory(session);
+  return { props: { inventory: result } };
+}
 
-export default function Inventory() {
+export default function Inventory({ inventory }) {
   const { data: session } = useSession();
 
-  const [inventory, setInventory] = React.useState({
-    shirts: { headers: [], values: [] },
-    accessories: { headers: [], values: [] },
-  });
+  // const [inventory, setInventory] = React.useState({
+  //   shirts: { headers: [], values: [] },
+  //   accessories: { headers: [], values: [] },
+  // });
 
-  React.useEffect(() => {
-    let fetchData = async () => {
-      setInventory(
-        await (
-          await fetch(process.env.NEXT_PUBLIC_BASE_ADDRESS + "/api/inventory", {
-            method: "GET",
-          })
-        ).json()
-      );
-    };
+  // React.useEffect(() => {
+  //   let fetchData = async () => {
+  //     setInventory(
+  //       await (
+  //         await fetch(process.env.NEXT_PUBLIC_BASE_ADDRESS + "/api/inventory", {
+  //           method: "GET",
+  //         })
+  //       ).json()
+  //     );
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // });
 
   return (
     <div>
@@ -60,15 +56,15 @@ export default function Inventory() {
         <>
           <div>
             <h1>Shirts</h1>
-            {(inventory.shirts && (
+            {(inventory?.shirts && (
               <table>
                 <thead>
-                  {inventory.shirts.headers.map((v, i) => (
+                  {inventory?.shirts.headers.map((v, i) => (
                     <th key={i}>{v}</th>
                   ))}
                 </thead>
 
-                {inventory.shirts.values.map((v, i) => (
+                {inventory?.shirts.values.map((v, i) => (
                   <Link key={i} href="">
                     <tr>
                       {v.map((vv, i) => (
@@ -83,15 +79,15 @@ export default function Inventory() {
 
           <div>
             <h1>Accessories</h1>
-            {(inventory.accessories && (
+            {(inventory?.accessories && (
               <table>
                 <thead>
-                  {inventory.accessories.headers.map((v, i) => (
+                  {inventory?.accessories.headers.map((v, i) => (
                     <th key={i}>{v}</th>
                   ))}
                 </thead>
 
-                {inventory.accessories.values.map((v, i) => (
+                {inventory?.accessories.values.map((v, i) => (
                   <Link key={i} href="">
                     <tr>
                       {v.map((vv, i) => (
