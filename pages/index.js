@@ -8,7 +8,6 @@ export default function Home() {
       <Head>
         <title>Gachapon Packer</title>
         <link rel="icon" href="/favicon.png" />
-        <script src="https://accounts.google.com/gsi/client"></script>
       </Head>
 
       <Header />

@@ -1,6 +1,7 @@
 import React from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import styles from "../styles/Home.module.css";
+import Image from "next/image";
 
 export default function SignInButton() {
   const { data: session } = useSession();
@@ -13,12 +14,13 @@ export default function SignInButton() {
         style={{ flexGrow: 0, flexBasis: "auto", margin: 0, padding: "1em" }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
-          <img
+          <Image
             src={session.user.image}
             width={32}
             height={32}
+            alt="user image"
             style={{ borderRadius: "8em", marginRight: "12px" }}
-          ></img>
+          ></Image>
           Signed in as
           <br /> {session.user.name}
         </div>

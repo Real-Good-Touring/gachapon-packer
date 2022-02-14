@@ -24,14 +24,18 @@ export default function Inventory() {
     accessories: { headers: [], values: [] },
   });
 
-  React.useEffect(async () => {
-    setInventory(
-      await (
-        await fetch(process.env.NEXT_PUBLIC_BASE_ADDRESS + "/api/inventory", {
-          method: "GET",
-        })
-      ).json()
-    );
+  React.useEffect(() => {
+    let fetchData = async () => {
+      setInventory(
+        await (
+          await fetch(process.env.NEXT_PUBLIC_BASE_ADDRESS + "/api/inventory", {
+            method: "GET",
+          })
+        ).json()
+      );
+    };
+
+    fetchData();
   }, []);
 
   return (
