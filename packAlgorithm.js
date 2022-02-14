@@ -287,7 +287,7 @@ export default function Run(inventory) {
   return {
     largeBoxes: generateSummary(largeBoxes),
     smallBoxes: generateSummary(smallBoxes),
-    failedBoxes: generateSummary(failedBoxes),
+    // failedBoxes: generateSummary(failedBoxes),
     leftOverShirtsCount: Object.values(sizeShirtsDict)
       .reduce((t, x) => t.concat(x), [])
       .reduce((t, x) => t + x.quantity, 0),
