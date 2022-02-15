@@ -73,6 +73,7 @@ export default function PackResults({ result }) {
         <a
           className={styles.card + " " + styles.sheets}
           target="_blank"
+          rel="noreferrer"
           href={`https://docs.google.com/spreadsheets/d/${result.sheetId}`}
         >
           <h1>
