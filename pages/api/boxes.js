@@ -1,6 +1,7 @@
 import Run from "../../packAlgorithm";
 import getInventory from "../../getInventory";
 import { getSession } from "next-auth/react";
+import writePackingLists from "../../writePackingLists";
 
 export default async function handler(req, res) {
   const session = await getSession({ req });
@@ -14,5 +15,11 @@ export default async function handler(req, res) {
 
   let response = await getInventory(session);
 
-  res.status(200).send(JSON.stringify(Run(response), null, 2));
+  let lists = await Run(response);
+
+  let sheetId = await writePackingLists(session, lists);
+
+  lists.sheetId = sheetId;
+
+  res.status(200).send(JSON.stringify(lists, null, 2));
 }

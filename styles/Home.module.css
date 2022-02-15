@@ -121,6 +121,14 @@
   line-height: 1.5;
 }
 
+.card.nointeract:hover,
+.card.nointeract:focus,
+.card.nointeract:active {
+  color: black;
+  border-color: #d0d0d0;
+  cursor: default;
+}
+
 .logo {
   height: 1em;
   margin-left: 0.5rem;
@@ -136,4 +144,18 @@
     flex-grow: auto;
     flex-basis: auto;
   }
+}
+
+.card.sheets {
+  color: var(--color-sheets);
+  border-color: var(--color-sheets);
+  cursor: pointer;
+  opacity: 0.75;
+  transition: all 0.2s ease-out;
+}
+
+.card.sheets:hover,
+.card.sheets:active,
+.card.sheets:focus {
+  opacity: 1;
 }

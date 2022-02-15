@@ -120,7 +120,7 @@ const specialAccessoryNames = [
   "BODY PILLOW DANIELLA",
   "BODY PILLOW - FURRY DAN",
 ];
-const sizes = ["s", "m", "l", "xl", "x2", "x3", "x4", "x5"];
+const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X"];
 
 const smallToLargeRatio = 2; // we want ~1000 small and large 500 boxes
 const smallBoxes = [];
@@ -273,7 +273,7 @@ export default function Run(inventory) {
       averageValue: (
         boxes.reduce((t, x) => t + x.getValue(), 0) / boxes.length
       ).toPrecision(3),
-      //result: boxes,
+      boxes: boxes,
     };
   };
   let leftOverShirts = {};
@@ -408,7 +408,7 @@ function fillBox(box) {
       ) ?? possibleItems[[possibleItems.length - 1]];
 
     if (!item) {
-      console.warn("possibly ran out of products to use - " + box);
+      //console.warn("possibly ran out of products to use - " + box);
       return false;
     }
 
