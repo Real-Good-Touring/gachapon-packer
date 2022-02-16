@@ -42,7 +42,7 @@ export default async function writePackingLists(session, lists) {
 
     let sm = formatForSheets(lists.smallBoxes.boxes, 1);
 
-    await sheets.spreadsheets.values.update({
+    sheets.spreadsheets.values.update({
       spreadsheetId: sheetId,
       range: "Small Boxes!A1",
       resource: { values: sm.values },
@@ -52,7 +52,7 @@ export default async function writePackingLists(session, lists) {
     console.log("small boxes updated.");
 
     let lg = formatForSheets(lists.largeBoxes.boxes, sm.index);
-    await sheets.spreadsheets.values.update({
+    sheets.spreadsheets.values.update({
       spreadsheetId: sheetId,
       range: "Large Boxes!A1",
       resource: {
