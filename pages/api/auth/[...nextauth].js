@@ -81,6 +81,7 @@ export default NextAuth({
           accessTokenExpires: Date.now() + account.expires_in * 1000,
           refreshToken: account.refresh_token,
           user,
+          token: token,
         };
       }
 

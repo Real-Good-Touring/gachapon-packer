@@ -221,9 +221,10 @@ export default function Run(inventory, omitBoxes = false) {
     }
 
     if (!fillBox(box)) {
-      if (box.items.length === 0) {
-        done = true;
-      }
+      //if (box.items.length === 0) {
+      done = true;
+      //}
+
       //   console.log(`there are still ${accessories.reduce(
       //     (t, x) => x.quantity + t,
       //     0
