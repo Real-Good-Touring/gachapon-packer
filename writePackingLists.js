@@ -40,7 +40,7 @@ export default async function writePackingLists(session, lists) {
     sheetId = spreadsheet.data.spreadsheetId;
     console.log(`Spreadsheet ID: ${spreadsheet.data.spreadsheetId}`);
 
-    let sm = formatForSheets(lists.largeBoxes.boxes, 1);
+    let sm = formatForSheets(lists.smallBoxes.boxes, 1);
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: sheetId,

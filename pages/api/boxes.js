@@ -15,11 +15,11 @@ export default async function handler(req, res) {
 
   let response = await getInventory(session);
 
-  let lists = await Run(response);
+  let lists = await Run(response, true);
 
-  let sheetId = await writePackingLists(session, lists);
+  // let sheetId = await writePackingLists(session, lists);
 
-  lists.sheetId = sheetId;
+  // lists.sheetId = sheetId;
 
   res.status(200).send(JSON.stringify(lists, null, 2));
 }

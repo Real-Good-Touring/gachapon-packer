@@ -137,7 +137,7 @@ const largeAccessories = [];
 //   ))
 // });
 
-export default function Run(inventory) {
+export default function Run(inventory, omitBoxes = false) {
   // transform shirts
   inventory.shirts.values.forEach((row) => {
     let description = row.splice(0, 1)[0];
@@ -268,13 +268,16 @@ export default function Run(inventory) {
   });
 
   let generateSummary = (boxes) => {
-    return {
+    let sum = {
       total: boxes.length,
       averageValue: (
         boxes.reduce((t, x) => t + x.getValue(), 0) / boxes.length
       ).toPrecision(3),
-      boxes: boxes,
     };
+    if (!omitBoxes) {
+      sum.boxes = boxes;
+    }
+    return sum;
   };
   let leftOverShirts = {};
   Object.keys(sizeShirtsDict).forEach((size) => {
@@ -365,7 +368,11 @@ function getPossibleItems(exclusionList, size, isLarge, boxxy) {
   removeIf(result, (x) =>
     exclusionList
       .map((m) => m.description)
-      .some((exludedDescription) => x.description == exludedDescription)
+      .some(
+        (exludedDescription) =>
+          normalizeDescription(x.description) ==
+          normalizeDescription(exludedDescription)
+      )
   );
 
   return result.sort((a, b) => a.price - b.price || a.quantity - b.quantity);
@@ -498,4 +505,8 @@ function removeIf(arr, callback) {
       arr.splice(i, 1);
     }
   }
+}
+
+function normalizeDescription(desc) {
+  return desc.split("(")[0]?.split("-")[0]?.trim() ?? "";
 }

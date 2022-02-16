@@ -76,8 +76,15 @@ export default function PackResults({ result }) {
           rel="noreferrer"
           href={`https://docs.google.com/spreadsheets/d/${result.sheetId}`}
         >
-          <h1>
-            <span>
+          <h1 style={{ margin: 0 }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+                flexWrap: "nowrap",
+              }}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 x="0px"
@@ -93,8 +100,9 @@ export default function PackResults({ result }) {
               >
                 <path d="M 14 2 L 6 2 C 4.894531 2 4 2.894531 4 4 L 4 20 C 4 21.105469 4.894531 22 6 22 L 18 22 C 19.105469 22 20 21.105469 20 20 L 20 8 Z M 11 20 L 7 20 L 7 18 L 11 18 Z M 11 17 L 7 17 L 7 15 L 11 15 Z M 11 14 L 7 14 L 7 12 L 11 12 Z M 17 20 L 13 20 L 13 18 L 17 18 Z M 17 17 L 13 17 L 13 15 L 17 15 Z M 17 14 L 13 14 L 13 12 L 17 12 Z M 13 9 L 13 3.5 L 18.5 9 Z"></path>
               </svg>
-            </span>
-            View Packing Lists
+              <span style={{ flexGrow: "1" }}>View Packing Lists</span>
+              <span style={{ flexGrow: "0" }}>&rarr;</span>
+            </div>
           </h1>
         </a>
       </main>
