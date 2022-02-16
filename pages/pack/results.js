@@ -14,6 +14,8 @@ export async function getServerSideProps(ctx) {
   let lists = await GenerateBoxes(inv);
   let sheetId = await writePackingLists(session, lists);
   lists.sheetId = sheetId;
+  delete lists.smallBoxes.boxes;
+  delete lists.largeBoxes.boxes;
   let summary = JSON.parse(JSON.stringify(lists));
   return { props: { result: summary } };
 }
