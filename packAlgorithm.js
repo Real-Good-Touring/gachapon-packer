@@ -122,6 +122,8 @@ const specialAccessoryNames = [
 ];
 const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X"];
 
+const smallBoxMax = 1000;
+const largeBoxMax = 500;
 const smallToLargeRatio = 2; // we want ~1000 small and large 500 boxes
 const smallBoxes = [];
 const largeBoxes = [];
@@ -189,10 +191,14 @@ export default function Run(inventory, omitBoxes = false) {
   while (!done) {
     // every third box, make it a large
     let box = null;
-    if (count++ % 3 === 0) {
+    if (count++ % 3 === 0 && largeBoxes.length < largeBoxMax) {
       box = new Box(true);
-    } else {
+    } else if (smallBoxes.length < smallBoxMax) {
       box = new Box();
+    } else {
+      console.log("max boxes reached");
+      done = true;
+      break;
     }
 
     let outOfShirts =
