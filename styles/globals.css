@@ -32,7 +32,7 @@ table {
   /* border-radius: 0.5rem; */
   background-color: #fff;
   border: 1px var(--color-subtle) solid;
-  box-shadow: 2px 2px 4px #00003012;
+  /* box-shadow: 2px 2px 4px #00003012; */
   border-collapse: collapse;
 }
 

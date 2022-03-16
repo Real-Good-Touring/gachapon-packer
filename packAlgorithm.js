@@ -120,7 +120,19 @@ const specialAccessoryNames = [
   "BODY PILLOW DANIELLA",
   "BODY PILLOW - FURRY DAN",
 ];
-const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X"];
+const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X", "N/A"];
+let sizeWeights = {
+  S: 1,
+  M: 2,
+  L: 3,
+  XL: 4,
+  "2X": 5,
+  "3X": 6,
+  "3X": 7,
+  "4X": 8,
+  "5X": 9,
+  "N/A": 10,
+};
 
 const smallBoxMax = 1000;
 const largeBoxMax = 500;
@@ -128,6 +140,31 @@ const smallToLargeRatio = 2; // we want ~1000 small and large 500 boxes
 const smallBoxes = [];
 const largeBoxes = [];
 const failedBoxes = [];
+
+const smallBoxesDict = {
+  S: 0,
+  M: 0,
+  L: 0,
+  XL: 0,
+  "2X": 0,
+  "3X": 0,
+  "3X": 0,
+  "4X": 0,
+  "5X": 0,
+  "N/A": 0,
+};
+const largeBoxesDict = {
+  S: 0,
+  M: 0,
+  L: 0,
+  XL: 0,
+  "2X": 0,
+  "3X": 0,
+  "3X": 0,
+  "4X": 0,
+  "5X": 0,
+  "N/A": 0,
+};
 
 const sizeShirtsDict = {};
 const accessories = [];
@@ -246,8 +283,13 @@ export default function Run(inventory, omitBoxes = false) {
     if (!box.isTargetReached()) {
       failedBoxes.push(box);
     } else {
-      if (box.isLarge) largeBoxes.push(box);
-      else smallBoxes.push(box);
+      if (box.isLarge) {
+        largeBoxes.push(box);
+        largeBoxesDict[box.size]++;
+      } else {
+        smallBoxes.push(box);
+        smallBoxesDict[box.size]++;
+      }
     }
   }
 
@@ -277,12 +319,23 @@ export default function Run(inventory, omitBoxes = false) {
   let generateSummary = (boxes) => {
     let sum = {
       total: boxes.length,
+      // sizeSCount: boxes.reduce((t, x) => (x.size == "S" ? t + 1 : t), 0),
+      // sizeMCount: boxes.reduce((t, x) => (x.size == "M" ? t + 1 : t), 0),
+      // sizeLCount: boxes.reduce((t, x) => (x.size == "L" ? t + 1 : t), 0),
+      // sizeXLCount: boxes.reduce((t, x) => (x.size == "XL" ? t + 1 : t), 0),
+      // size2XCount: boxes.reduce((t, x) => (x.size == "2X" ? t + 1 : t), 0),
+      // size3XCount: boxes.reduce((t, x) => (x.size == "3X" ? t + 1 : t), 0),
+      // size4XCount: boxes.reduce((t, x) => (x.size == "4X" ? t + 1 : t), 0),
+      // size5xCount: boxes.reduce((t, x) => (x.size == "5X" ? t + 1 : t), 0),
+      // sizeNoneCount: boxes.reduce((t, x) => (x.size == "N/A" ? t + 1 : t), 0),
       averageValue: (
         boxes.reduce((t, x) => t + x.getValue(), 0) / boxes.length
       ).toPrecision(3),
     };
     if (!omitBoxes) {
-      sum.boxes = boxes;
+      sum.boxes = boxes.sort((a, b) => {
+        return sizeWeights[a.size] - sizeWeights[b.size];
+      });
     }
     return sum;
   };
@@ -296,7 +349,9 @@ export default function Run(inventory, omitBoxes = false) {
 
   return {
     largeBoxes: generateSummary(largeBoxes),
+    largeBoxesDict: largeBoxesDict,
     smallBoxes: generateSummary(smallBoxes),
+    smallBoxesDict: smallBoxesDict,
     // failedBoxes: generateSummary(failedBoxes),
     leftOverShirtsCount: Object.values(sizeShirtsDict)
       .reduce((t, x) => t.concat(x), [])
@@ -333,7 +388,7 @@ function getPossibleItems(exclusionList, size, isLarge, boxxy) {
   let result = [];
 
   let possibleShirts = [];
-  if (size === null)
+  if (size === null || size === "N/A")
     sizes.forEach((sz) => {
       sizeShirtsDict[sz].forEach((x) => possibleShirts.push(x));
     });

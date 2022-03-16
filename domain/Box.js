@@ -5,7 +5,7 @@ export default class Box {
     this.isLarge = isLarge;
     this.target = isLarge ? 125 : 60;
     this.items = [];
-    this.size = null;
+    this.size = "N/A";
   }
 
   isTargetReached() {
@@ -30,7 +30,7 @@ export default class Box {
   tryAddShirt(shirt) {
     if (shirt == null) return false;
 
-    if (this.size && shirt.size !== this.size) {
+    if (this.size !== "N/A" && shirt.size !== this.size) {
       return false;
     }
 

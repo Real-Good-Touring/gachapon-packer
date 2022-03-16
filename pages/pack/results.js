@@ -8,6 +8,8 @@ import writePackingLists from "../../writePackingLists";
 import styles from "../../styles/Home.module.css";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
+const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X", "N/A"];
+
 export async function getServerSideProps(ctx) {
   let session = await getSession(ctx);
   let inv = await getInventory(session);
@@ -49,6 +51,23 @@ export default function PackResults({ result }) {
           <br />
           Average Value
           <p>{toCurrency(result.smallBoxes.averageValue)}</p>
+          <br />
+          Size Quantity
+          <br />
+          <br />
+          <table>
+            <thead>
+              {sizes.map((v, i) => (
+                <th key={i}>{`${v}`}</th>
+              ))}
+            </thead>
+
+            <tr>
+              {sizes.map((v, i) => (
+                <td key={i}>{result.smallBoxesDict[v]}</td>
+              ))}
+            </tr>
+          </table>
         </div>
 
         <div className={styles.card + " " + styles.nointeract}>
@@ -58,6 +77,23 @@ export default function PackResults({ result }) {
           <br />
           Average Value
           <p>{toCurrency(result.largeBoxes.averageValue)}</p>
+          <br />
+          Size Quantity
+          <br />
+          <br />
+          <table>
+            <thead>
+              {sizes.map((v, i) => (
+                <th key={i}>{`${v}`}</th>
+              ))}
+            </thead>
+
+            <tr>
+              {sizes.map((v, i) => (
+                <td key={i}>{result.largeBoxesDict[v]}</td>
+              ))}
+            </tr>
+          </table>
         </div>
 
         <div className={styles.card + " " + styles.nointeract}>
