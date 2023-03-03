@@ -1,4 +1,4 @@
-import Product from "./domain/Product";
+import Product, { Size } from "./domain/Product";
 import Box from "./domain/Box";
 import {
   shirtNames,
@@ -12,9 +12,9 @@ const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X", "N/A"];
 const smallBoxMax = 0;
 const largeBoxMax = 1500;
 const smallToLargeRatio = 2; // we want ~1000 small and large 500 boxes
-const smallBoxes = [];
-const largeBoxes = [];
-const failedBoxes = [];
+const smallBoxes: Box[] = [];
+const largeBoxes: Box[] = [];
+const failedBoxes: Box[] = [];
 
 const smallBoxesDict = {
   S: 0,
@@ -23,11 +23,10 @@ const smallBoxesDict = {
   XL: 0,
   "2X": 0,
   "3X": 0,
-  "3X": 0,
   "4X": 0,
   "5X": 0,
   "N/A": 0,
-};
+} satisfies Record<Size, number>;
 const largeBoxesDict = {
   S: 0,
   M: 0,
@@ -35,15 +34,35 @@ const largeBoxesDict = {
   XL: 0,
   "2X": 0,
   "3X": 0,
+  "4X": 0,
+  "5X": 0,
+  "N/A": 0,
+} satisfies Record<Size, number>;
+const leftOverShirts = {
+  S: 0,
+  M: 0,
+  L: 0,
+  XL: 0,
+  "2X": 0,
   "3X": 0,
   "4X": 0,
   "5X": 0,
   "N/A": 0,
-};
+} satisfies Record<Size, number>;
 
-const sizeShirtsDict = {};
-const accessories = [];
-const largeAccessories = [];
+const sizeShirtsDict: Record<Size, Product[]> = {
+  S: [],
+  M: [],
+  L: [],
+  XL: [],
+  "2X": [],
+  "3X": [],
+  "4X": [],
+  "5X": [],
+  "N/A": [],
+};
+const accessories: Product[] = [];
+const largeAccessories: Product[] = [];
 
 // shirtNames.forEach(name => {
 //   shirtStockDict[name] = Object.assign({},
@@ -51,7 +70,7 @@ const largeAccessories = [];
 //   ))
 // });
 
-export default function Run(inventory) {
+export default function Run(inventory: any) {
   // transform shirts
   // inventory.shirts.values.forEach((row) => {
   //   let description = row.splice(0, 1)[0];
@@ -119,7 +138,7 @@ export default function Run(inventory) {
 
     let outOfShirts =
       Object.values(sizeShirtsDict)
-        .reduce((t, x) => t.concat(x), [])
+        .reduce((t, x) => t.concat(x), [] as Product[])
         .reduce((t, x) => t + x.quantity, 0) <= 0;
 
     if (
@@ -195,20 +214,9 @@ export default function Run(inventory) {
     });
   });
 
-  let generateSummary = (boxes) => {
-    let sum = {
-      total: boxes.length,
-      averageValue: (
-        boxes.reduce((t, x) => t + x.getValue(), 0) / boxes.length
-      ).toPrecision(3),
-    };
-
-    return sum;
-  };
-  let leftOverShirts = {};
   Object.keys(sizeShirtsDict).forEach((size) => {
     leftOverShirts[size] = sizeShirtsDict[size].reduce(
-      (t, x) => t + x.quantity,
+      (t, x: Product) => t + x.quantity,
       0
     );
   });
@@ -220,7 +228,7 @@ export default function Run(inventory) {
     smallBoxesDict: smallBoxesDict,
     // failedBoxes: generateSummary(failedBoxes),
     leftOverShirtsCount: Object.values(sizeShirtsDict)
-      .reduce((t, x) => t.concat(x), [])
+      .reduce((t, x) => t.concat(x), [] as Product[])
       .reduce((t, x) => t + x.quantity, 0),
     leftOverShirts: leftOverShirts,
     leftOverAccessories: accessories.reduce((t, x) => t + x.quantity, 0),
@@ -249,8 +257,19 @@ export default function Run(inventory) {
   };
 }
 
-function getPossibleItems(box, ignoreShirtMin = false) {
-  let result = [];
+function generateSummary(boxes: Box[]) {
+  let sum = {
+    total: boxes.length,
+    averageValue: (
+      boxes.reduce((t, x) => t + x.getValue(), 0) / boxes.length
+    ).toPrecision(3),
+  };
+
+  return sum;
+}
+
+function getPossibleItems(box: Box, ignoreShirtMin = false): Product[] {
+  let result: Product[] = [];
 
   // exclusionList - array of products we already have - dont bother looking at dupes
   const exclusionList = box.items ?? [];
@@ -258,7 +277,7 @@ function getPossibleItems(box, ignoreShirtMin = false) {
     .filter((x) => x.size != null)
     .reduce((t, x) => t + x.quantity, 0);
 
-  let possibleShirts = [];
+  let possibleShirts: Product[] = [];
   if (box.size === null || box.size === "N/A")
     sizes.forEach((sz) => {
       sizeShirtsDict[sz].forEach((x) => possibleShirts.push(x));
@@ -279,7 +298,7 @@ function getPossibleItems(box, ignoreShirtMin = false) {
   }
 
   // remove dupes
-  removeIf(result, (x) =>
+  removeIf(result, (x: Product) =>
     exclusionList
       .map((m) => m.description)
       .some(
@@ -294,9 +313,9 @@ function getPossibleItems(box, ignoreShirtMin = false) {
 }
 
 function getLeastValuableAboveThreshold(
-  threshold,
-  sortedItems,
-  selector = (x) => x
+  threshold: number,
+  sortedItems: Product[],
+  selector = (x: any) => x
 ) {
   for (let i = 0; i < sortedItems.length; i++) {
     let item = sortedItems[i];
@@ -306,7 +325,7 @@ function getLeastValuableAboveThreshold(
   return null;
 }
 
-function fillBox(box) {
+function fillBox(box: Box) {
   let i = 0;
   while (!box.isTargetReached()) {
     i++;
@@ -363,9 +382,9 @@ function generateMockData() {
         (name) =>
           new Product(
             name,
-            random() > 0.5 ? 24 : 34,
+            Math.random() > 0.5 ? 24 : 34,
             Math.floor(Math.random() * 100), // stockMath.
-            size,
+            size as Size,
             false
           )
       )
@@ -378,7 +397,7 @@ function generateMockData() {
         name,
         Math.random() * 50 + 5,
         Math.floor(Math.random() * 200), // stock
-        null,
+        "N/A",
         false
       )
     );
@@ -390,18 +409,18 @@ function generateMockData() {
         name,
         Math.random() * 20 + 90,
         Math.floor(Math.random() * 10), // stock
-        null,
+        "N/A",
         true
       )
     );
   });
 }
 
-function parseNumberFromCurrency(text) {
+function parseNumberFromCurrency(text: string) {
   return parseFloat(text.replace(/[^\d\.]/, ""));
 }
 
-function removeIf(arr, callback) {
+function removeIf(arr: [], callback: (x: any, i: number) => boolean) {
   var i = arr.length;
   while (i--) {
     if (callback(arr[i], i)) {
@@ -410,6 +429,6 @@ function removeIf(arr, callback) {
   }
 }
 
-function normalizeDescription(desc) {
+function normalizeDescription(desc: string) {
   return desc.split("(")[0]?.split("-")[0]?.trim() ?? "";
 }

@@ -2,20 +2,20 @@ import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 import Header from "../../components/header";
-import getInventory from "../../getInventory";
+//import getInventory from "../../getInventory";
 import GenerateBoxes from "../../packAlgorithm";
-import writePackingLists from "../../writePackingLists";
+//import writePackingLists from "../../writePackingLists";
 import styles from "../../styles/Home.module.css";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 
 const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X", "N/A"];
 
 export async function getServerSideProps(ctx) {
-  let session = await getSession(ctx);
-  let inv = await getInventory(session);
-  let lists = await GenerateBoxes(inv);
-  let sheetId = await writePackingLists(session, lists);
-  lists.sheetId = sheetId;
+  //let session = await getSession(ctx);
+  //let inv = await getInventory(session);
+  let lists = await GenerateBoxes(null);
+  // let sheetId = await writePackingLists(session, lists);
+  // lists.sheetId = sheetId;
   delete lists.smallBoxes.boxes;
   delete lists.largeBoxes.boxes;
   let summary = JSON.parse(JSON.stringify(lists));
@@ -23,7 +23,7 @@ export async function getServerSideProps(ctx) {
 }
 
 export default function PackResults({ result }) {
-  const { data: session } = useSession();
+  //const { data: session } = useSession();
 
   return (
     <div>

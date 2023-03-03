@@ -1,6 +1,10 @@
-import Product from "./Product";
+import Product, { Size } from "./Product";
 
 export default class Box {
+  isLarge: boolean;
+  target: number;
+  items: Product[];
+  size: Size;
   constructor(isLarge = false) {
     this.isLarge = isLarge;
     this.target = isLarge ? 125 : 60;
@@ -27,7 +31,7 @@ export default class Box {
     return q;
   }
 
-  tryAddShirt(shirt) {
+  tryAddShirt(shirt: Product) {
     if (shirt == null) return false;
 
     if (this.size !== "N/A" && shirt.size !== this.size) {
@@ -35,6 +39,9 @@ export default class Box {
     }
 
     // avoid dupes
+    if (this.items.some((x) => x.description == shirt.description))
+      return false;
+
     if (this.items.some((x) => x.description == shirt.description))
       return false;
 

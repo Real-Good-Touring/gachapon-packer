@@ -25,6 +25,7 @@ export default async function writePackingLists(session, lists) {
       title: "Gachapon - Pack Lists - " + new Date().toISOString(),
     },
     sheets: [
+      { properties: { title: "Summary" } },
       { properties: { title: "Small Boxes" } },
       { properties: { title: "Large Boxes" } },
     ],
@@ -40,16 +41,24 @@ export default async function writePackingLists(session, lists) {
     sheetId = spreadsheet.data.spreadsheetId;
     console.log(`Spreadsheet ID: ${spreadsheet.data.spreadsheetId}`);
 
-    let sm = formatForSheets(lists.smallBoxes.boxes, 1);
-
-    sheets.spreadsheets.values.update({
+    let breakdown = formatForBreakdown(lists);
+    await sheets.spreadsheets.values.update({
       spreadsheetId: sheetId,
-      range: "Small Boxes!A1",
-      resource: { values: sm.values },
+      range: "Summary!A1",
+      resource: { values: breakdown.values },
       valueInputOption: "USER_ENTERED",
     });
 
-    console.log("small boxes updated.");
+    // let sm = formatForSheets(lists.smallBoxes.boxes, 1);
+
+    // sheets.spreadsheets.values.update({
+    //   spreadsheetId: sheetId,
+    //   range: "Small Boxes!A1",
+    //   resource: { values: sm.values },
+    //   valueInputOption: "USER_ENTERED",
+    // });
+
+    //console.log("small boxes updated.");
 
     let lg = formatForSheets(lists.largeBoxes.boxes, sm.index);
     sheets.spreadsheets.values.update({
@@ -92,6 +101,16 @@ function formatForSheets(boxes, index) {
     values.push([""]);
   });
 
+  return { values: values, index: i };
+}
+
+function formatForBreakdown(lists) {
+  const headers = [""].concat(Object.keys(smallBoxDict));
+  let i = index ?? 1;
+
+  let values = [headers];
+  values.push(["SMALL BOXES"].concat(Object.values(smallBoxDict)));
+  values.push(["LARGE BOXES"].concat(Object.values(largeBoxDict)));
   return { values: values, index: i };
 }
 
