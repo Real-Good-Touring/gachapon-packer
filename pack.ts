@@ -1,11 +1,9 @@
-import Product, { Size } from "./domain/Product";
-import Box from "./domain/Box";
 import {
   shirtNames,
   accessoryNames,
   specialAccessoryNames,
-  generateMockProducts,
 } from "./utils/mock";
+import { PackResults, PackSummary, Box, Product, Size } from "./utils/types";
 
 const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X", "N/A"];
 
@@ -70,7 +68,7 @@ const largeAccessories: Product[] = [];
 //   ))
 // });
 
-export default function Run(inventory: any) {
+export default function Run(inventory: any): PackResults {
   // transform shirts
   // inventory.shirts.values.forEach((row) => {
   //   let description = row.splice(0, 1)[0];
@@ -215,7 +213,7 @@ export default function Run(inventory: any) {
   });
 
   Object.keys(sizeShirtsDict).forEach((size) => {
-    leftOverShirts[size] = sizeShirtsDict[size].reduce(
+    leftOverShirts[size as Size] = sizeShirtsDict[size as Size].reduce(
       (t, x: Product) => t + x.quantity,
       0
     );
@@ -226,16 +224,14 @@ export default function Run(inventory: any) {
     largeBoxesDict: largeBoxesDict,
     smallBoxes: generateSummary(smallBoxes),
     smallBoxesDict: smallBoxesDict,
-    // failedBoxes: generateSummary(failedBoxes),
+
     leftOverShirtsCount: Object.values(sizeShirtsDict)
       .reduce((t, x) => t.concat(x), [] as Product[])
       .reduce((t, x) => t + x.quantity, 0),
     leftOverShirts: leftOverShirts,
     leftOverAccessories: accessories.reduce((t, x) => t + x.quantity, 0),
-    mostLeftOverAccessories: accessories
-      .sort((a, b) => b.quantity - a.quantity)
-      .slice(0, 5),
-    leftOverLargeAccessories: largeAccessories.reduce(
+
+    leftOverSpecialAccessories: largeAccessories.reduce(
       (t, x) => t + x.quantity,
       0
     ),
@@ -245,24 +241,16 @@ export default function Run(inventory: any) {
     totalVariance:
       smallBoxes.reduce((t, x) => t + x.getValue() - x.target, 0) +
       largeBoxes.reduce((t, x) => t + x.getValue() - x.target, 0),
-    score:
-      100 -
-      (
-        ((smallBoxes.reduce((t, x) => t + x.getValue() - x.target, 0) +
-          largeBoxes.reduce((t, x) => t + x.getValue() - x.target, 0)) /
-          (smallBoxes.reduce((t, x) => t + x.getValue(), 0) +
-            largeBoxes.reduce((t, x) => t + x.getValue(), 0))) *
-        100
-      ).toFixed(2),
   };
 }
 
-function generateSummary(boxes: Box[]) {
+function generateSummary(boxes: Box[]): PackSummary {
   let sum = {
     total: boxes.length,
     averageValue: (
       boxes.reduce((t, x) => t + x.getValue(), 0) / boxes.length
     ).toPrecision(3),
+    boxes: boxes,
   };
 
   return sum;
@@ -280,7 +268,7 @@ function getPossibleItems(box: Box, ignoreShirtMin = false): Product[] {
   let possibleShirts: Product[] = [];
   if (box.size === null || box.size === "N/A")
     sizes.forEach((sz) => {
-      sizeShirtsDict[sz].forEach((x) => possibleShirts.push(x));
+      sizeShirtsDict[sz as Size].forEach((x) => possibleShirts.push(x));
     });
   else possibleShirts = sizeShirtsDict[box.size];
 
@@ -353,17 +341,17 @@ function fillBox(box: Box) {
     let copy = JSON.parse(JSON.stringify(item));
     copy.quantity = 1;
     // is this a shirt?
-    if (item.size !== null) {
+    if (item.category == "Shirt") {
       if (box.tryAddShirt(copy)) {
         item.quantity -= 1;
         continue;
       } else {
-        console.log(
-          `failed to add another ${box.size} shirt. only dupes left?
-            box: ${box}
-            shirt: ${item}
-            possibleItems: ${possibleItems}`
-        );
+        // console.log(
+        //   `failed to add another ${box.size} shirt. only dupes left?
+        //     box: ${box}
+        //     shirt: ${item}`
+        //   // possibleItems: ${possibleItems}
+        // );
         break;
       }
     } else {
@@ -372,20 +360,26 @@ function fillBox(box: Box) {
     }
   }
 
+  if (i >= 10) {
+    console.warn("box filling took too long - " + box);
+    return false;
+  }
+
   return true;
 }
 
 function generateMockData() {
   sizes.forEach((size) => {
-    sizeShirtsDict[size] = shirtNames
+    sizeShirtsDict[size as Size] = shirtNames
       .map(
         (name) =>
           new Product(
             name,
             Math.random() > 0.5 ? 24 : 34,
-            Math.floor(Math.random() * 100), // stockMath.
+            Math.floor(Math.random() * 4), // stockMath.
             size as Size,
-            false
+            false,
+            "Shirt"
           )
       )
       .sort((a, b) => b.quantity - a.quantity);
@@ -396,9 +390,10 @@ function generateMockData() {
       new Product(
         name,
         Math.random() * 50 + 5,
-        Math.floor(Math.random() * 200), // stock
+        Math.floor(Math.random() * 20), // stock
         "N/A",
-        false
+        false,
+        "Accessory"
       )
     );
   });
@@ -410,7 +405,8 @@ function generateMockData() {
         Math.random() * 20 + 90,
         Math.floor(Math.random() * 10), // stock
         "N/A",
-        true
+        true,
+        "Special Accessory"
       )
     );
   });
@@ -420,7 +416,7 @@ function parseNumberFromCurrency(text: string) {
   return parseFloat(text.replace(/[^\d\.]/, ""));
 }
 
-function removeIf(arr: [], callback: (x: any, i: number) => boolean) {
+function removeIf(arr: any[], callback: (x: any, i: number) => boolean) {
   var i = arr.length;
   while (i--) {
     if (callback(arr[i], i)) {

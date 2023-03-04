@@ -1,5 +1,6 @@
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
+  output: "standalone",
 };
 
 module.exports = {

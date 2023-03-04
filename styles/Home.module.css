@@ -88,7 +88,7 @@
 
 .card {
   background-color: transparent;
-  margin: 1rem;
+  margin: 0.5rem;
   padding: 1.5rem;
   text-align: left;
   color: inherit;
@@ -147,7 +147,11 @@
 }
 
 .card.sheets {
+  width: 100%;
   color: var(--color-sheets);
+
+  flex-grow: auto;
+  flex-basis: auto;
 
   cursor: pointer;
   opacity: 0.75;
@@ -159,4 +163,24 @@
 .card.sheets:focus {
   opacity: 1;
   border-color: var(--color-sheets);
+}
+
+.totalGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.badOutline {
+  outline-style: solid;
+  outline-width: 2px;
+  outline-color: #fca5a5;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.goodOutline {
+  outline-style: solid;
+  outline-width: 2px;
+  outline-color: #86efac;
+  outline-offset: 4px;
+  border-radius: 4px;
 }
