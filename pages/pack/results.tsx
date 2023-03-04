@@ -64,7 +64,7 @@ export default function PackResultsPage({
           padding: "2em",
           justifyContent: "start",
           alignItems: "start",
-          gap: "0em",
+          gap: ".75em",
           flexWrap: "wrap",
         }}
       >
@@ -98,7 +98,9 @@ export default function PackResultsPage({
               >
                 <path d="M 14 2 L 6 2 C 4.894531 2 4 2.894531 4 4 L 4 20 C 4 21.105469 4.894531 22 6 22 L 18 22 C 19.105469 22 20 21.105469 20 20 L 20 8 Z M 11 20 L 7 20 L 7 18 L 11 18 Z M 11 17 L 7 17 L 7 15 L 11 15 Z M 11 14 L 7 14 L 7 12 L 11 12 Z M 17 20 L 13 20 L 13 18 L 17 18 Z M 17 17 L 13 17 L 13 15 L 17 15 Z M 17 14 L 13 14 L 13 12 L 17 12 Z M 13 9 L 13 3.5 L 18.5 9 Z"></path>
               </svg>
-              <span style={{ flexGrow: "1" }}>View Packing Lists</span>
+              <span style={{ flexGrow: "1" }}>
+                View Packing Lists in Sheets
+              </span>
               <span style={{ flexGrow: "0" }}>&rarr;</span>
             </div>
           </h1>
@@ -205,15 +207,40 @@ export default function PackResultsPage({
                 <p>{shirtCount[3]}</p>
               </div>
             </div>
+            <div style={{}}>
+              Left Over Shirts
+              <p style={{ fontSize: 11, color: "#808080" }}>
+                Usually due to mismatch in sizes or too many duplicates
+              </p>
+              <p>{result.leftOverShirtsCount}</p>
+              <br />
+              Left Over Accessories
+              <p>{result.leftOverAccessories}</p>
+              <br />
+              Left Over Special Accessories
+              <p>{result.leftOverSpecialAccessories}</p>
+            </div>
           </div>
         </div>
 
-        <div className={styles.card + " " + styles.nointeract}>
-          <h2>List</h2>
+        <div
+          style={{
+            flexGrow: "auto",
+            width: "100%",
+            flexBasis: "auto",
+          }}
+        >
+          <h2 style={{ marginBottom: 0 }}>Packing Lists</h2>
+          <p style={{ fontSize: 10, color: "#808080", lineHeight: "9px" }}>
+            In case Google Sheets integration breaks 🙃
+          </p>
+          <br />
           <div>
-            {result.largeBoxes.boxes.map((box, i) => (
-              <Box key={i} idx={i} box={box}></Box>
-            ))}
+            {result.largeBoxes.boxes
+              .concat(result.smallBoxes.boxes)
+              .map((box, i) => (
+                <Box key={i} idx={i + 1} box={box}></Box>
+              ))}
           </div>
         </div>
       </main>

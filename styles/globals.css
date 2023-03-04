@@ -43,6 +43,7 @@ td {
 th {
   border: 1px var(--color-subtle) solid;
   padding: 0.25rem;
+  font-weight: 500;
 }
 
 /* tr:first-child td:first-child {
@@ -63,3 +64,7 @@ tr:first-child td {
 tr td:first-child {
   border-left-style: solid;
 } */
+
+.packTable {
+  table-layout: fixed;
+}
