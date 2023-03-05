@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Router from "next/router";
 import styles from "../../styles/Home.module.css";
 import { Switch } from "@headlessui/react";
@@ -29,7 +29,28 @@ export default function Configure() {
         "largePercent=" + Math.round(b / (a + b))
       }`
     );
+
+    localStorage.setItem(
+      "pack-settings",
+      JSON.stringify({
+        maxEnabled: maxEnabled,
+        max: max,
+        isSmallDenom: isSmallDenom,
+        ratioDenom: ratioDenom,
+      })
+    );
   }
+
+  useEffect(() => {
+    const settingsString = localStorage.getItem("pack-settings");
+    const settings = settingsString ? JSON.parse(settingsString) : null;
+    if (settings) {
+      setMaxEnabled(settings.maxEnabled as boolean);
+      setMax(settings.max as number);
+      setIsSmallDenom(settings.isSmallDenom as boolean);
+      setRatioDenom(settings.ratioDenom as number);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -41,9 +62,9 @@ export default function Configure() {
       {!loading && (
         <form>
           <main className="max-w-2xl mx-auto outline-gray-900/10 rounded-xl outline-1 outline p-8">
-            <h1 className="text-4xl mb-16">Pack Rules</h1>
+            <h1 className="text-4xl mb-16">Pack Settings</h1>
             <div className="flex justify-between mb-6 items-center">
-              <h2 className="font-normal">Set Maxiumum Number of Gachapons</h2>
+              <h2 className="font-normal">Enable Maxiumum</h2>
               <Switch
                 checked={maxEnabled}
                 onChange={setMaxEnabled}
