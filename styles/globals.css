@@ -1,3 +1,20 @@
+@tailwind base;
+
+@layer base {
+  h1 {
+    @apply text-2xl font-bold;
+  }
+  h2 {
+    @apply text-xl font-bold;
+  }
+  h3 {
+    @apply text-lg font-bold;
+  }
+}
+
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --color-subtle: #eaeaea;
   --color-primary: #0070f3;
@@ -67,4 +84,49 @@ tr td:first-child {
 
 .packTable {
   table-layout: fixed;
+}
+
+.SliderRoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  width: 200px;
+  height: 20px;
+}
+
+.SliderTrack {
+  background-color: hsla(0, 0%, 0%, 0.478);
+  position: relative;
+  flex-grow: 1;
+  border-radius: 9999px;
+  height: 3px;
+}
+
+.SliderRange {
+  position: absolute;
+  background-color: white;
+  border-radius: 9999px;
+  height: 100%;
+}
+
+.SliderThumb {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  box-shadow: 0 2px 10px hsla(0, 0%, 0%, 0.141);
+  border-radius: 10px;
+}
+.SliderThumb:hover {
+  background-color: hsla(254, 100%, 50%, 0.051);
+}
+.SliderThumb:focus {
+  outline: none;
+  box-shadow: 0 0 0 5px hsla(0, 0%, 0%, 0.22);
+}
+
+h1 h2 h3 {
+  font-weight: bold !important;
 }

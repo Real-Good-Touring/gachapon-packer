@@ -7,13 +7,6 @@ import { PackResults, PackSummary, Box, Product, Size } from "./utils/types";
 
 const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X", "N/A"];
 
-const smallBoxMax = 0;
-const largeBoxMax = 1500;
-const smallToLargeRatio = 2; // we want ~1000 small and large 500 boxes
-const smallBoxes: Box[] = [];
-const largeBoxes: Box[] = [];
-const failedBoxes: Box[] = [];
-
 const smallBoxesDict = {
   S: 0,
   M: 0,
@@ -68,7 +61,15 @@ const largeAccessories: Product[] = [];
 //   ))
 // });
 
-export default function Run(inventory: any): PackResults {
+export default function Run(
+  inventory: any,
+  max: number = 99999,
+  largePercent: number = 0.5
+): PackResults {
+  const smallBoxes: Box[] = [];
+  const largeBoxes: Box[] = [];
+  const failedBoxes: Box[] = [];
+
   // transform shirts
   // inventory.shirts.values.forEach((row) => {
   //   let description = row.splice(0, 1)[0];
@@ -117,22 +118,16 @@ export default function Run(inventory: any): PackResults {
   failedBoxes.length = 0;
 
   let done = false;
-  let count = 0;
 
   while (!done) {
-    // every third box, make it a large
-    // let box = null;
-    // if (count++ % 3 === 0 && largeBoxes.length < largeBoxMax) {
-    //   box = new Box(true);
-    // } else if (smallBoxes.length < smallBoxMax) {
-    //   box = new Box();
-    // } else {
-    //   console.log("max boxes reached");
-    //   done = true;
-    //   break;
-    // }
+    if (smallBoxes.length + largeBoxes.length >= max) {
+      console.log("max boxes reached");
+      done = true;
+      break;
+    }
 
-    let box = new Box(true);
+    const isLarge = Math.random() <= largePercent;
+    let box = new Box(isLarge);
 
     let outOfShirts =
       Object.values(sizeShirtsDict)
@@ -377,7 +372,7 @@ function generateMockData() {
             name,
             Math.random() > 0.5 ? 24 : 34,
             Math.floor(Math.random() * 4), // stockMath.
-            size as Size,
+            size == "N/A" ? "L" : (size as Size),
             false,
             "Shirt"
           )

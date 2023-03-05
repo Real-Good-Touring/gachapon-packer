@@ -14,15 +14,25 @@ import Box from "./components/Box";
 const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X", "N/A"];
 
 export async function getServerSideProps(ctx: any) {
-  //let session = await getSession(ctx);
-  //let inv = await getInventory(session);
-  let packResults = await GenerateBoxes(null);
+  let max, largePercent;
+
+  if (ctx.query) {
+    max = ctx.query.max;
+    largePercent = ctx.query.largePercent;
+  }
+
+  //const session = await getSession(ctx);
+
+  //const inv = await getInventory(session);
+
+  const packResults = await GenerateBoxes(
+    null,
+    max || undefined,
+    largePercent || undefined
+  );
+
   // let sheetId = await writePackingLists(session, lists);
   // lists.sheetId = sheetId;
-
-  // why delete?
-  // delete packResults.smallBoxes.boxes;
-  // delete packResults.largeBoxes.boxes;
 
   let summary = JSON.parse(JSON.stringify(packResults));
   return { props: { result: summary, sheetId: null } };
@@ -230,8 +240,13 @@ export default function PackResultsPage({
             flexBasis: "auto",
           }}
         >
-          <h2 style={{ marginBottom: 0 }}>Packing Lists</h2>
-          <p style={{ fontSize: 10, color: "#808080", lineHeight: "9px" }}>
+          <h2 className="mt-2 text-2xl" style={{ marginBottom: 0 }}>
+            Packing Lists
+          </h2>
+          <p
+            style={{ fontSize: 10, color: "#808080", lineHeight: "9px" }}
+            className="mt-1"
+          >
             In case Google Sheets integration breaks 🙃
           </p>
           <br />
