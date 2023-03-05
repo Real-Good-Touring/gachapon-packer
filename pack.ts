@@ -71,47 +71,50 @@ export default function Run(
   const failedBoxes: Box[] = [];
 
   // transform shirts
-  // inventory.shirts.values.forEach((row) => {
-  //   let description = row.splice(0, 1)[0];
-  //   let price = row.splice(0, 1)[0];
-  //   let i = 0;
-  //   sizes.forEach((size) => {
-  //     if (!sizeShirtsDict[size]) sizeShirtsDict[size] = [];
-  //     sizeShirtsDict[size].push(
-  //       new Product(
-  //         description,
-  //         !price ? 0 : parseNumberFromCurrency(price),
-  //         row[i] == "#REF!" || !row[i] ? 0 : parseInt(row[i]), // stock
-  //         size
-  //       )
-  //     );
-  //     i++;
-  //   });
-  // });
+  inventory.shirts.values.forEach((row: any[]) => {
+    let description = row.splice(0, 1)[0];
+    let price = row.splice(0, 1)[0];
+    let i = 0;
+    sizes.forEach((size) => {
+      if (!sizeShirtsDict[size as Size]) sizeShirtsDict[size as Size] = [];
+      sizeShirtsDict[size as Size].push(
+        new Product(
+          description,
+          !price ? 0 : parseNumberFromCurrency(price),
+          row[i] == "#REF!" || !row[i] ? 0 : parseInt(row[i]), // stock
+          size as Size,
+          false,
+          "Shirt"
+        )
+      );
+      i++;
+    });
+  });
 
   // transform accessories
   accessories.length = 0;
   largeAccessories.length = 0;
 
-  // inventory.accessories.values.forEach((row) => {
-  //   let description = row.splice(0, 1)[0];
-  //   let price = row.splice(0, 1)[0];
-  //   let isLargeOnly = row.splice(0, 1)[0].toLowerCase() == "true";
-  //   let product = new Product(
-  //     description,
-  //     !price ? 0 : parseNumberFromCurrency(price),
-  //     row[0] == "#REF!" || !row[0] ? 0 : parseInt(row[0]), // stock
-  //     null,
-  //     isLargeOnly
-  //   );
-  //   if (product.isSpecial) {
-  //     largeAccessories.push(product);
-  //   } else {
-  //     accessories.push(product);
-  //   }
-  // });
+  inventory.accessories.values.forEach((row: any[]) => {
+    let description = row.splice(0, 1)[0];
+    let price = row.splice(0, 1)[0];
+    let isLargeOnly = row.splice(0, 1)[0].toLowerCase() == "true";
+    let product = new Product(
+      description,
+      !price ? 0 : parseNumberFromCurrency(price),
+      row[0] == "#REF!" || !row[0] ? 0 : parseInt(row[0]), // stock
+      "N/A",
+      isLargeOnly,
+      isLargeOnly ? "Special Accessory" : "Accessory"
+    );
+    if (product.isSpecial) {
+      largeAccessories.push(product);
+    } else {
+      accessories.push(product);
+    }
+  });
 
-  generateMockData();
+  //generateMockData();
 
   smallBoxes.length = 0;
   largeBoxes.length = 0;

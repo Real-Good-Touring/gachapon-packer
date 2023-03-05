@@ -2,9 +2,9 @@ import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 import Header from "../../components/header";
-//import getInventory from "../../getInventory";
+import getInventory from "../../getInventory";
 import GenerateBoxes from "../../pack";
-//import writePackingLists from "../../writePackingLists";
+import writePackingLists from "../../writePackingLists";
 import styles from "../../styles/Home.module.css";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { PackResults, Size } from "../../utils/types";
@@ -21,18 +21,17 @@ export async function getServerSideProps(ctx: any) {
     largePercent = ctx.query.largePercent;
   }
 
-  //const session = await getSession(ctx);
+  const session = await getSession(ctx);
 
-  //const inv = await getInventory(session);
+  const inv = await getInventory(session);
 
   const packResults = await GenerateBoxes(
-    null,
+    inv,
     max || undefined,
     largePercent || undefined
   );
 
-  // let sheetId = await writePackingLists(session, lists);
-  // lists.sheetId = sheetId;
+  let sheetId = await writePackingLists(session, packResults);
 
   let summary = JSON.parse(JSON.stringify(packResults));
   return { props: { result: summary, sheetId: null } };

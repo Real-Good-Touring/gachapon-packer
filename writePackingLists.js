@@ -49,16 +49,16 @@ export default async function writePackingLists(session, lists) {
       valueInputOption: "USER_ENTERED",
     });
 
-    // let sm = formatForSheets(lists.smallBoxes.boxes, 1);
+    let sm = formatForSheets(lists.smallBoxes.boxes, 1);
 
-    // sheets.spreadsheets.values.update({
-    //   spreadsheetId: sheetId,
-    //   range: "Small Boxes!A1",
-    //   resource: { values: sm.values },
-    //   valueInputOption: "USER_ENTERED",
-    // });
+    sheets.spreadsheets.values.update({
+      spreadsheetId: sheetId,
+      range: "Small Boxes!A1",
+      resource: { values: sm.values },
+      valueInputOption: "USER_ENTERED",
+    });
 
-    //console.log("small boxes updated.");
+    console.log("small boxes updated.");
 
     let lg = formatForSheets(lists.largeBoxes.boxes, sm.index);
     sheets.spreadsheets.values.update({
