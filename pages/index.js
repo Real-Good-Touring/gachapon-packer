@@ -15,7 +15,7 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>{"📦 Gachapon Packer"}</h1>
 
-        <div className={styles.grid}>
+        <div className={styles.grid} style={{ gap: "1em" }}>
           <a href={"/inventory"} className={styles.card}>
             <h2>Stock &rarr;</h2>
             <p>View inventory eligible to be packed</p>

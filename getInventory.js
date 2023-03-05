@@ -11,6 +11,7 @@ export default async function getInventory(session) {
     access_token: session.token.access_token,
     scope: "openid profile email https://www.googleapis.com/auth/spreadsheets",
   };
+
   oAuth2Client.setCredentials(credentials);
 
   const sheets = google.sheets({

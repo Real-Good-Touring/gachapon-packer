@@ -1,6 +1,16 @@
-import { google } from "googleapis";
+// @ts-nocheck
 
-export default async function writePackingLists(session, lists) {
+import { google } from "googleapis";
+import { Box, PackResults } from "./utils/types";
+import { toCurrency } from "./utils/helpers";
+
+export default async function writePackingLists({
+  session,
+  lists,
+}: {
+  session: any;
+  lists: PackResults;
+}) {
   const oAuth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET
@@ -37,8 +47,16 @@ export default async function writePackingLists(session, lists) {
     });
 
     spreadsheet.data.spreadsheetId;
-    sheetId = spreadsheet.data.spreadsheetId;
+    sheetId = spreadsheet.data.spreadsheetId as string;
     console.log(`Spreadsheet ID: ${spreadsheet.data.spreadsheetId}`);
+
+    // let breakdown = formatForBreakdown(lists);
+    // sheets.spreadsheets.values.update({
+    //   spreadsheetId: sheetId,
+    //   range: "Summary!A1",
+    //   resource: { values: breakdown.values },
+    //   valueInputOption: "USER_ENTERED",
+    // } as any);
 
     let sm = formatForSheets(lists.smallBoxes.boxes, 1);
 
@@ -47,7 +65,7 @@ export default async function writePackingLists(session, lists) {
       range: "Small Boxes!A1",
       resource: { values: sm.values },
       valueInputOption: "USER_ENTERED",
-    });
+    } as any);
 
     console.log("small boxes updated.");
 
@@ -59,7 +77,7 @@ export default async function writePackingLists(session, lists) {
         values: lg.values,
       },
       valueInputOption: "USER_ENTERED",
-    });
+    } as any);
     console.log("large boxes updated.");
   } catch (e) {
     console.error(e);
@@ -68,24 +86,24 @@ export default async function writePackingLists(session, lists) {
   return sheetId;
 }
 
-function formatForSheets(boxes, index) {
+function formatForSheets(boxes: Box[], index: number) {
   const headers = ["", "ITEM", "SIZE", "VALUE"];
   let i = index ?? 1;
 
   let values = [headers];
   boxes.forEach((box) => {
     values.push([
-      "#" + String(parseInt(i++)).padStart(4, "0"),
+      "#" + String(i++).padStart(4, "0"),
       "",
       "",
-      toCurrency(box.getValue()),
+      toCurrency(box.getValue()) as string,
     ]);
     box.items.forEach((item) =>
       values.push([
         "",
         item.description,
         item.size ?? "",
-        toCurrency(item.price),
+        toCurrency(item.price) as string,
       ])
     );
 
@@ -95,8 +113,13 @@ function formatForSheets(boxes, index) {
   return { values: values, index: i };
 }
 
-function toCurrency(v) {
-  let q = parseFloat(v);
-  if (!q) return v;
-  return "$" + q.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
-}
+// function formatForBreakdown(lists: PackResults, index: number = 1) {
+//   const headers = [""].concat(Object.keys(lists.smallBoxesDict));
+//   let i = index ?? 1;
+
+//   let values = [headers];
+//   const huh = Object.values(lists.smallBoxesDict);
+//   values.push(["SMALL BOXES"].concat(Object.values(lists.smallBoxesDict)));
+//   values.push(["LARGE BOXES"].concat(Object.values(lists.largeBoxesDict)));
+//   return { values: values, index: i };
+// }
