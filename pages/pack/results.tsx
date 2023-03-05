@@ -9,7 +9,7 @@ import styles from "../../styles/Home.module.css";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { PackResults, Size } from "../../utils/types";
 import { toCurrency } from "../../utils/helpers";
-import Box from "./components/Box";
+import Box from "../../components/Box";
 
 const sizes = ["S", "M", "L", "XL", "2X", "3X", "4X", "5X", "N/A"];
 

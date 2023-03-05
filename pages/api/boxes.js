@@ -1,7 +1,6 @@
-import Run from "../../packAlgorithm";
+import Run from "../../pack";
 import getInventory from "../../getInventory";
 import { getSession } from "next-auth/react";
-import writePackingLists from "../../writePackingLists";
 
 export default async function handler(req, res) {
   const session = await getSession({ req });

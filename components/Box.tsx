@@ -1,5 +1,5 @@
-import { Box, Product, Size } from "../../../utils/types";
-import { toCurrency } from "../../../utils/helpers";
+import { Box, Product, Size } from "../utils/types";
+import { toCurrency } from "../utils/helpers";
 import React from "react";
 
 export default function BoxComponent({ box, idx }: { box: Box; idx: number }) {

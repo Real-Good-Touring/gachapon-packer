@@ -128,6 +128,7 @@ export function generateMockProducts(): Product[] {
       category: "Shirt",
       price: Math.random() > 0.5 ? 24 : 34,
       quantity: Math.floor(Math.random() * 200),
+      isSpecial: false,
     });
   }
   for (let i = 0; i < accessoryNames.length; i++) {
@@ -137,6 +138,7 @@ export function generateMockProducts(): Product[] {
       category: "Accessory",
       price: Math.random() * 50 + 5,
       quantity: Math.floor(Math.random() * 200),
+      isSpecial: false,
     });
   }
   for (let i = 0; i < specialAccessoryNames.length; i++) {
@@ -146,6 +148,7 @@ export function generateMockProducts(): Product[] {
       category: "Special Accessory",
       price: Math.random() * 20 + 90,
       quantity: Math.floor(Math.random() * 200),
+      isSpecial: true,
     });
   }
   return products;
