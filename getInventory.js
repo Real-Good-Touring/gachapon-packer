@@ -5,15 +5,14 @@ export default async function getInventory(session) {
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET
   );
-  // let credentials = {
-  //   refresh_token: session.token.refreshToken,
-  //   expiry_date: session.token.exp,
-  //   access_token: session.token.access_token,
-  //   scope: "openid profile email https://www.googleapis.com/auth/spreadsheets",
-  // };
-  const token = await oAuth2Client.getAccessToken();
-  oAuth2Client.setCredentials(token);
-  //oAuth2Client.setCredentials(credentials);
+  let credentials = {
+    refresh_token: session.token.refreshToken,
+    expiry_date: session.token.exp,
+    access_token: session.token.access_token,
+    scope: "openid profile email https://www.googleapis.com/auth/spreadsheets",
+  };
+
+  oAuth2Client.setCredentials(credentials);
 
   const sheets = google.sheets({
     version: "v4",

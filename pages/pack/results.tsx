@@ -31,10 +31,10 @@ export async function getServerSideProps(ctx: any) {
     largePercent || undefined
   );
 
-  let sheetId = await writePackingLists(session, packResults);
+  let sheetId = await writePackingLists({ session, lists: packResults });
 
   let summary = JSON.parse(JSON.stringify(packResults));
-  return { props: { result: summary, sheetId: null } };
+  return { props: { result: summary, sheetId: sheetId } };
 }
 
 export default function PackResultsPage({

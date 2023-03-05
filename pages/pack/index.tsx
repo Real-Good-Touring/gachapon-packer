@@ -26,7 +26,7 @@ export default function Configure() {
     setLoading(true);
     Router.push(
       `/pack/results?${maxEnabled ? "max=" + max + "&" : ""}${
-        "largePercent=" + Math.round(b / (a + b))
+        "largePercent=" + (b / (a + b)).toPrecision(3)
       }`
     );
 
