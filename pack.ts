@@ -55,12 +55,6 @@ const sizeShirtsDict: Record<Size, Product[]> = {
 const accessories: Product[] = [];
 const largeAccessories: Product[] = [];
 
-// shirtNames.forEach(name => {
-//   shirtStockDict[name] = Object.assign({},
-//     ...sizes.map(size => ({ [size]: parseInt(Math.random() * 200) })
-//   ))
-// });
-
 export default function Run(
   inventory: any,
   max: number = 99999,

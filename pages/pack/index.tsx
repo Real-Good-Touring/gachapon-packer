@@ -163,6 +163,10 @@ export default function Configure() {
                   </tr>
                 </tbody>
               </table>
+              <p className="mt-1 text-xs text-gray-500">
+                Final number of boxes are subject to vary based on inventory
+                levels.
+              </p>
 
               <button
                 type="submit"
