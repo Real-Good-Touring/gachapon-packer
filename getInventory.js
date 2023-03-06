@@ -24,7 +24,7 @@ export default async function getInventory(session) {
     range: "Shirts",
   });
 
-  const shirts = response.data.values;
+  const shirts = response.data.values.filter((row) => row[0] != "");
   const shirtsHeaders = shirts.splice(0, 1)[0];
 
   response = await sheets.spreadsheets.values.get({
@@ -32,7 +32,7 @@ export default async function getInventory(session) {
     range: "Accessories",
   });
 
-  const accessories = response.data.values;
+  const accessories = response.data.values.filter((row) => row[0] != "");
   const accessoriesHeaders = accessories.splice(0, 1)[0];
 
   let result = {
